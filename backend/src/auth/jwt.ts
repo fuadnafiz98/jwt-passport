@@ -1,10 +1,9 @@
 import jwt from "jsonwebtoken";
-<<<<<<< HEAD
 import { Request } from "express";
 import { Strategy as JWTStrategy } from "passport-jwt";
 import { StrategyOptions } from "passport-jwt";
 
-import { Payload } from "../types";
+import { Payload } from "../interfaces";
 
 const getTokenFromCookie = (request: Request) => {
   let token = null;
@@ -31,11 +30,6 @@ const jwtToken = new JWTStrategy(config, function (payload, done) {
   }
 });
 
-=======
-
-import { Payload } from "../types";
-
->>>>>>> 62e9650ee9a1a5a3f82d117f11f379815e54367f
 function generateToken(payload: Payload, isRefreshToken: boolean) {
   // const today = new Date();
   // const exp = new Date(today);
@@ -69,8 +63,4 @@ function validateToken(token: string, isRefreshToken: boolean) {
   }
 }
 
-<<<<<<< HEAD
 export { jwtToken, generateToken, validateToken };
-=======
-export { generateToken, validateToken };
->>>>>>> 62e9650ee9a1a5a3f82d117f11f379815e54367f

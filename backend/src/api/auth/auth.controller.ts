@@ -22,13 +22,8 @@ async function signUp(req: Request, res: Response, next: NextFunction) {
         },
       },
     });
-<<<<<<< HEAD
   } catch (err: any) {
     return next(err);
-=======
-  } catch (err) {
-    return next(err.message);
->>>>>>> 62e9650ee9a1a5a3f82d117f11f379815e54367f
   }
 }
 async function signIn(req: Request, res: Response, next: NextFunction) {
@@ -56,11 +51,7 @@ async function signIn(req: Request, res: Response, next: NextFunction) {
         },
       },
     });
-<<<<<<< HEAD
   } catch (err: any) {
-=======
-  } catch (err) {
->>>>>>> 62e9650ee9a1a5a3f82d117f11f379815e54367f
     return next(err.message);
   }
 }
@@ -68,11 +59,7 @@ async function signIn(req: Request, res: Response, next: NextFunction) {
 async function signOut(req: Request, res: Response, next: NextFunction) {
   try {
     await service.signOut(req.body);
-<<<<<<< HEAD
   } catch (err: any) {
-=======
-  } catch (err) {
->>>>>>> 62e9650ee9a1a5a3f82d117f11f379815e54367f
     return next(err.message);
   }
   if (req.cookies.JWTToken) {

@@ -4,12 +4,8 @@ import { signIn, signOut, signUp, checkToken } from "./auth.controller";
 
 const router = express.Router();
 
-<<<<<<< HEAD
 import passport from "../../auth/passport";
 import magicLogin from "../../auth/magicLogin";
-=======
-import passport, { magicLogin } from "../../auth/passport";
->>>>>>> 62e9650ee9a1a5a3f82d117f11f379815e54367f
 
 router.post("/magic", magicLogin.send);
 router.get("/magic/callback", (req, res) => {

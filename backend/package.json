@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "tsc": "tsc",
+    "dev": "NODE_ENV=dev nodemon dist/index.js",
     "update": "npx npm-check-updates -u",
-    "watch": "tsc -w --preserveWatchOutput",
-    "dev": "NODE_ENV=dev nodemon dist/index.js"
+    "watch": "tsc -w --preserveWatchOutput"
   },
   "keywords": [],
-  "author": "",
+  "author": "fuadnafiz98",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^2.28.0",
