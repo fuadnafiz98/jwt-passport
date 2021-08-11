@@ -63,4 +63,18 @@ function validateToken(token: string, isRefreshToken: boolean) {
   }
 }
 
-export { jwtToken, generateToken, validateToken };
+function generateResetToken(payload: { userId: string; email: string }) {
+  console.log(`generating reset token for user: ${payload.userId}`);
+  return jwt.sign(
+    {
+      userId: payload.userId,
+      email: payload.email,
+    },
+    "SUPERSECRET",
+    {
+      expiresIn: "300s",
+    }
+  );
+}
+
+export { jwtToken, generateToken, generateResetToken, validateToken };

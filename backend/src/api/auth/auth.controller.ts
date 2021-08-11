@@ -26,6 +26,7 @@ async function signUp(req: Request, res: Response, next: NextFunction) {
     return next(err);
   }
 }
+
 async function signIn(req: Request, res: Response, next: NextFunction) {
   try {
     const data = await service.signIn(req.body);
@@ -99,4 +100,66 @@ async function checkToken(req: Request, res: Response, next: NextFunction) {
   });
 }
 
-export { checkToken, signUp, signIn, signOut };
+async function generateResetLink(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const data = await service.generateResetLink(req.body);
+    if (data === null) {
+      return res.json({
+        message: "Error!, email not currect",
+      });
+    }
+    return res.json({
+      email: data?.email,
+      link: `http://localhost:8000/api/auth/reset-password/${data?.token}`,
+    });
+  } catch (err: any) {
+    return next(err);
+  }
+}
+
+async function resetPassword(req: Request, res: Response, next: NextFunction) {
+  const data = await service.resetPassword(req.body);
+  console.log("[data]", data);
+  if (data === null) {
+    return res.status(400).json({
+      status: "400",
+      message: "Error!, Token expired",
+    });
+  }
+  return res.json({
+    status: "200",
+    message: "Password reset successfully!",
+  });
+}
+
+async function changePassword(req: Request, res: Response, next: NextFunction) {
+  try {
+    const data = await service.changePassword(req.body);
+    if (data === null) {
+      return res.json({
+        status: "400",
+        message: "something went wrong!",
+      });
+    }
+    return res.json({
+      status: "200",
+      message: "Password changed successfully!",
+    });
+  } catch (err: any) {
+    next(err);
+  }
+}
+
+export {
+  checkToken,
+  changePassword,
+  generateResetLink,
+  resetPassword,
+  signUp,
+  signIn,
+  signOut,
+};

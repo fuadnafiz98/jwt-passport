@@ -31,8 +31,8 @@ app.get("/api/vip", handleAuth, (req, res) => {
 app.use("/api", api);
 
 app.use((err: Errback, req: Request, res: Response, next: NextFunction) => {
-  console.log(err);
-  return res.status(404).json({ message: err });
+  console.log("[app.ts error]", err);
+  return res.status(404).json({ message: err.toString() });
 });
 
 app.use(notFound);

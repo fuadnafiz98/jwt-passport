@@ -1,7 +1,13 @@
 import { randomBytes } from "crypto";
 import prisma from "../../loaders/prisma";
 import argon2 from "argon2";
-import { generateToken, validateToken } from "../../auth/jwt";
+import jwt from "jsonwebtoken";
+import {
+  generateToken,
+  generateResetToken,
+  validateToken,
+} from "../../auth/jwt";
+import { User } from ".prisma/client";
 
 async function signUp({
   username,
@@ -193,4 +199,173 @@ async function checkToken(
   };
 }
 
-export { checkToken, signIn, signUp, signOut };
+async function generateResetLink({ email }: { email: string }): Promise<{
+  email: string;
+  token: string;
+} | null> {
+  const user = await prisma.user.findFirst({
+    where: {
+      email: email,
+    },
+  });
+  if (user === null) return null;
+  const token = generateResetToken({ userId: user.user_id, email: user.email });
+
+  return {
+    email: email,
+    token: token,
+  };
+}
+
+async function resetPassword({
+  email,
+  password,
+  token,
+}: {
+  email: string;
+  password: string;
+  token: string;
+}) {
+  try {
+    jwt.verify(token, "SUPERSECRET");
+  } catch (error) {
+    console.log("[auth.service]", error);
+    return null;
+  }
+
+  const salt = randomBytes(32);
+  const hashedPassword = await argon2.hash(password, { salt });
+
+  const user = await prisma.user.update({
+    where: { email: email },
+    data: {
+      password: hashedPassword,
+      refresh_token: "",
+    },
+    select: {
+      id: true,
+      user_id: true,
+      username: true,
+      role: true,
+    },
+  });
+
+  const genToken = generateToken(
+    {
+      _id: user.id.toString(),
+      name: user.username,
+      role: user.role,
+    },
+    false
+  );
+
+  const refreshToken = generateToken(
+    {
+      _id: user.id.toString(),
+      name: user.username,
+      role: user.role,
+    },
+    true
+  );
+
+  const updatedUser = await prisma.user.update({
+    where: { email: email },
+    data: {
+      refresh_token: refreshToken,
+    },
+  });
+
+  console.log("[auth-service-reset], user: ", updatedUser);
+
+  return {
+    username: user.username,
+    userId: user.id,
+    role: user.role,
+    token: genToken,
+    refreshToken,
+  };
+}
+
+async function changePassword({
+  email,
+  oldPassword,
+  newPassword,
+}: {
+  email: string;
+  newPassword: string;
+  oldPassword: string;
+}) {
+  const user = await prisma.user.findUnique({
+    where: { email: email },
+  });
+
+  if (!user) {
+    throw new Error("user not found");
+  }
+
+  const validPassword = await argon2.verify(user.password, oldPassword);
+  if (!validPassword) {
+    throw new Error("Old password not currect!");
+  }
+
+  const salt = randomBytes(32);
+  const hashedPassword = await argon2.hash(newPassword, { salt });
+
+  await prisma.user.update({
+    where: { email: email },
+    data: {
+      password: hashedPassword,
+    },
+    select: {
+      id: true,
+      user_id: true,
+      username: true,
+      role: true,
+    },
+  });
+
+  const genToken = generateToken(
+    {
+      _id: user.id.toString(),
+      name: user.username,
+      role: user.role,
+    },
+    false
+  );
+
+  const refreshToken = generateToken(
+    {
+      _id: user.id.toString(),
+      name: user.username,
+      role: user.role,
+    },
+    true
+  );
+
+  const updatedUser = await prisma.user.update({
+    where: { email: email },
+    data: {
+      refresh_token: refreshToken,
+    },
+  });
+
+  console.log("[auth-service-change], user: ", updatedUser);
+
+  return {
+    username: user.username,
+    userId: user.id,
+    role: user.role,
+    token: genToken,
+    refreshToken,
+  };
+}
+
+export {
+  checkToken,
+  changePassword,
+  generateResetLink,
+  resetPassword,
+  signIn,
+  signUp,
+  signOut,
+};

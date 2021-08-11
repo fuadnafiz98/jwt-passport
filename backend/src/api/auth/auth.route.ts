@@ -1,6 +1,14 @@
 import express, { request } from "express";
 import { celebrate, Joi } from "celebrate";
-import { signIn, signOut, signUp, checkToken } from "./auth.controller";
+import {
+  checkToken,
+  changePassword,
+  generateResetLink,
+  resetPassword,
+  signIn,
+  signOut,
+  signUp,
+} from "./auth.controller";
 
 const router = express.Router();
 
@@ -44,5 +52,40 @@ router.post(
 router.post("/signout", signOut);
 
 router.get("/token", checkToken);
+
+router.post(
+  "/reset-password",
+  celebrate({
+    body: Joi.object({
+      email: Joi.string().required(),
+      password: Joi.string().required(),
+      token: Joi.string().required(),
+    }),
+  }),
+  resetPassword
+);
+
+router.post(
+  "/reset-link",
+  celebrate({
+    body: Joi.object({
+      email: Joi.string().required(),
+    }),
+  }),
+  generateResetLink
+);
+
+router.post(
+  "/change-password",
+  // TODO: handleAuth here, user must be authenticated to change the password.
+  celebrate({
+    body: Joi.object({
+      email: Joi.string().required(), //TODO: email not required if `handleAuth` is added.
+      oldPassword: Joi.string().required(),
+      newPassword: Joi.string().required(),
+    }),
+  }),
+  changePassword
+);
 
 export default router;
