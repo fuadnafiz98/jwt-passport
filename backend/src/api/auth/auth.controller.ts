@@ -32,15 +32,15 @@ async function signIn(req: Request, res: Response, next: NextFunction) {
     const data = await service.signIn(req.body);
 
     res.cookie("JWTToken", data.token, {
-      domain: "localhost",
-      sameSite: "lax",
+      // domain: ".example.com",
+      sameSite: "strict",
       httpOnly: true,
       secure: true,
     });
 
     res.cookie("refreshToken", data.refreshToken, {
-      domain: "localhost",
-      sameSite: "lax",
+      // domain: ".example.com",
+      sameSite: "strict",
       httpOnly: true,
       secure: true,
     });
