@@ -1,6 +1,8 @@
 //@ts-nocheck
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect } from "react";
 import { useHistory } from "react-router";
+
+import config from "../config";
 import { AuthContext } from "../context/AuthContext";
 import useInterval from "../hooks/useInterval";
 
@@ -10,7 +12,7 @@ const Dashboard = () => {
 
   const refreshToken = async () => {
     console.log("refresh token generating....");
-    let response = await fetch("api/auth/token", {
+    let response = await fetch(`${config.BACKEND_URL}/api/auth/token`, {
       credentials: "include",
     });
     if (response.status === 401) {
@@ -29,7 +31,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     async function fetchData() {
-      let response = await fetch("/api/vip", {
+      let response = await fetch(`${config.BACKEND_URL}/api/vip`, {
         credentials: "include",
       });
       if (response.status === 401) {
@@ -41,7 +43,8 @@ const Dashboard = () => {
       console.log(json);
     }
     fetchData();
-  }, []);
+  }, [auth, history]);
+
   return (
     <div>
       <h4>Dashboard</h4>

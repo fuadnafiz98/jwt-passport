@@ -1,4 +1,6 @@
 import React, { useState, useContext } from "react";
+
+import config from "../config";
 import { AuthContext } from "../context/AuthContext";
 
 const SignUp = () => {
@@ -13,9 +15,10 @@ const SignUp = () => {
     e.preventDefault();
     console.log(name, password, role);
     try {
-      const response = await fetch("/api/auth/signup", {
+      const response = await fetch(`${config.BACKEND_URL}/api/auth/signup`, {
         method: "POST",
         mode: "cors",
+        credentials :"include",
         headers: {
           "Content-Type": "application/json",
         },

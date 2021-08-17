@@ -1,6 +1,8 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 
+import config from "../config";
+
 const SignIn = () => {
   const authContext = useContext(AuthContext);
 
@@ -12,9 +14,10 @@ const SignIn = () => {
     e.preventDefault();
     console.log(name, password);
     try {
-      const response = await fetch("/api/auth/signin", {
+      const response = await fetch(`${config.BACKEND_URL}/api/auth/signin`, {
         method: "POST",
         mode: "cors",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },

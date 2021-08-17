@@ -12,7 +12,16 @@ import passport from "./auth/passport";
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: function (origin: any, callback: any) {
+      console.log("Origin ->", origin);
+      return callback(null, true);
+    },
+    optionsSuccessStatus: 200,
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(compression());
 app.use(express.json());

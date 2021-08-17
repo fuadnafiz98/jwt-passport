@@ -11,15 +11,6 @@ services:
       - /docker-data/${DB_NAME}:/var/lib/postgresql/data
     ports:
       - 5432:5432
-  db-admin:
-    depends_on:
-      - db
-    image: binakot/franchise
-    restart: always
-    ports:
-      - 5431:80
-      - 14645:14645
-
   # pgadmin:
   #   depends_on:
   #     - db
